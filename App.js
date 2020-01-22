@@ -1,6 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView, FlatList, TouchableOpacity } from "react-native";
-
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  ScrollView,
+  FlatList,
+  TouchableOpacity
+} from "react-native";
 
 export default function App() {
   const [people, setPeople] = useState([
@@ -13,28 +20,29 @@ export default function App() {
     { name: "bowser", id: "7" }
   ]);
 
-  const pressHandler = (id) => {
-    console.log(id)
+  const pressHandler = id => {
+    console.log(id);
     // automatically takes previous state as a
     // paramater
-    setPeople((person) => {
-      return person.filter((p) => p.id != id)
-    })
-  }
+    setPeople(person => {
+      return person.filter(p => p.id != id);
+    });
+  };
 
   return (
     <View style={styles.container}>
       {/* flat list only renders first items on screen
       so it is quicker */}
       {/* also adds columns */}
-    <FlatList
-        keyExtractor={(item) => item.id}
+      <FlatList
+        keyExtractor={item => item.id}
         numColumns={2}
         data={people}
-        renderItem={({ item }) =>
-        <TouchableOpacity onPress={()=> pressHandler(item.id)}>
-         <Text style={styles.item}>{item.name}</Text>
-        </TouchableOpacity>}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => pressHandler(item.id)}>
+            <Text style={styles.item}>{item.name}</Text>
+          </TouchableOpacity>
+        )}
       />
       {/* <ScrollView>
         {people.map(item => (
