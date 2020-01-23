@@ -1,57 +1,53 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  ScrollView,
-  FlatList,
-  TouchableOpacity
-} from "react-native";
+import { StyleSheet, Keyboard,  View, Alert, FlatList, TouchableWithoutFeedback } from "react-native";
+import Header from "./components/Header";
+import Todo from "./components/Todo";
+import AddToDo from "./components/addToDo";
 
 export default function App() {
-  const [people, setPeople] = useState([
-    { name: "shaun", id: "1" },
-    { name: "yoshi", id: "2" },
-    { name: "mario", id: "3" },
-    { name: "luigi", id: "4" },
-    { name: "peach", id: "5" },
-    { name: "toad", id: "6" },
-    { name: "bowser", id: "7" }
+  const [todos, setTodos] = useState([
+    { text: "buy coffee", key: "1" },
+    { text: "create an app", key: "2" },
+    { text: "play on the switch", key: "3" }
   ]);
 
-  const pressHandler = id => {
-    console.log(id);
-    // automatically takes previous state as a
-    // paramater
-    setPeople(person => {
-      return person.filter(p => p.id != id);
+  const pressHandler = key => {
+    setTodos(prevtodos => {
+      return prevtodos.filter(todo => todo.key != key);
     });
   };
 
+  const textUpdate = text => {
+    if (text.length > 2) {
+      setTodos(prevtodos => {
+        return [
+          { text: text, key: (1+ (prevtodos.length + 1)).toString() },
+          ...prevtodos
+        ];
+      });
+    } else {
+      Alert.alert("OOPS", "Text must be longer than this", [
+        { text: "Ok", onPress: () => console.log("ok") }
+      ]);
+    }
+  };
+
   return (
+    <TouchableWithoutFeedback onPress={()=> {
+      Keyboard.dismiss()}}>
     <View style={styles.container}>
-      {/* flat list only renders first items on screen
-      so it is quicker */}
-      {/* also adds columns */}
-      <FlatList
-        keyExtractor={item => item.id}
-        numColumns={2}
-        data={people}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => pressHandler(item.id)}>
-            <Text style={styles.item}>{item.name}</Text>
-          </TouchableOpacity>
-        )}
-      />
-      {/* <ScrollView>
-        {people.map(item => (
-          <View key={item.id} style={styles.item}>
-            <Text>{item.name}</Text>
-          </View>
-        ))}
-      </ScrollView> */}
+      <Header />
+      <View style={styles.content}>
+        <AddToDo textUpdate={textUpdate} />
+        <FlatList
+          data={todos}
+          renderItem={({ item }) => (
+            <Todo item={item} pressHandler={pressHandler} />
+          )}
+        />
+      </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -60,10 +56,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff"
   },
-  item: {
-    margin: 30,
-    padding: 30,
-    backgroundColor: "pink",
-    fontSize: 24
+  content: {
+    padding: 40
+  },
+  list: {
+    marginTop: 40
   }
 });
